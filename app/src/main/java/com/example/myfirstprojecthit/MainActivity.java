@@ -11,11 +11,12 @@ import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView result, display;
     Button add, sub, mul, equal;
-
     private String input, answer;
 
 
@@ -34,13 +35,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void onButtonClick(View view) {
 
+        //Pairs numbers side by side in the calculation line.
         if (view instanceof Button) {
             Button button = (Button) view;
             String str = button.getText().toString();
             display.append(str);
 
-
+            //Call to the function that solves the exercise + chaining the calculation sign
             switch (str) {
+
                 case "x":
                     Solve();
                     input += "*";
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
                 case "=":
                     Solve();
+                    //Answer is the result I present. In the solve function the input value has the result.
                     answer = input;
                     result.setText(answer);
                     break;
@@ -71,9 +75,6 @@ public class MainActivity extends AppCompatActivity {
                     if(input==null){
                         input="";
                     }
-//                    if(str.equals("+") || str.equals("-") || str.equals("/") || str.equals("*")){
-//                        Solve();
-//                    }
                     input+=str;
             }
         }
@@ -81,63 +82,82 @@ public class MainActivity extends AppCompatActivity {
 
     private void Solve() {
 
-            if(input.split("\\*").length==2) {
-                String number[] = input.split("\\*");
-                try {
-                    double mul = Double.parseDouble(number[0]) * Double.parseDouble(number[1]);
+        // The main principle - split the line of calc (AKA "input") until the calculation sign.
+        // The split function returns a string array.
+        // Do the math (treated as a decimal number).
+        // Input = to the result.
 
-                    input = mul+"";
+        if (input.split("\\*").length == 2) {
+            String number[] = input.split("\\*");
+            try {
+                double mul = Double.parseDouble(number[0]) * Double.parseDouble(number[1]);
+                input = mul + "";
 
-                } catch (Exception e) {
+            } catch (Exception e) {
+                input = "ERROR";
 
-                }
             }
+        }
 
-            else if (input.split("/").length==2) {
-                String number[] = input.split("/");
-                try {
-                    double div = Double.parseDouble(number[0])/Double.parseDouble(number[1]);
-                    input=div+"";
-                }
-                catch (Exception e) {
+        else if (input.split("/").length == 2) {
+            String number[] = input.split("/");
+            try {
+                double div = Double.parseDouble(number[0]) / Double.parseDouble(number[1]);
+                input = div + "";
+            } catch (Exception e) {
+                input = "ERROR";
 
-                }
             }
+        }
 
-            else if (input.split("\\+").length==2) {
-                String number[] = input.split("\\+");
-                try {
-                    double add = Double.parseDouble(number[0])+Double.parseDouble(number[1]);
-                    input=add+"";
-                }
-                catch (Exception e) {
+        else if (input.split("\\+").length == 2) {
+            String number[] = input.split("\\+");
+            try {
+                double add = Double.parseDouble(number[0]) + Double.parseDouble(number[1]);
+                input = add + "";
+            } catch (Exception e) {
+                input = "ERROR";
 
-                }
             }
+        }
+        //Here the length could be bigger than 2 - we may have more than one '-'.
+        //For example: (-5-9).
+        //The split will work like this: {"", 5,9}.
 
-            else if (input.split("\\-").length==2) {
-                String number[] = input.split("\\-");
-                if(number[0]=="" && number.length==2){
-                    number[0]=0+"'";
+        else if (input.split("\\-").length > 1) {
+            String number[] = input.split("\\-");
+            try {
+                double sub = 0;
+                if(number.length == 2){
+                    sub = Double.parseDouble(number[0]) - Double.parseDouble(number[1]);
                 }
-                try {
-                    double sub = Double.parseDouble(number[0])-Double.parseDouble(number[1]);
-                    input=sub+"";
+                //If I substract from negitive number (-5-9).
+                else if(number.length == 3 && number[0] == ""){
+                    number[0] = 0 + "";
+                    sub = -Double.parseDouble(number[1]) - Double.parseDouble(number[2]);
                 }
-                catch (Exception e) {
+                input = sub + "";
+            } catch (Exception e) {
+                input = "ERROR";
 
-                }
             }
-            String n[]=input.split("\\.");
-                if(n.length>1){
-                    if(n[1].equals("0")){
-                            input=n[0];
-                        }
-                    }
+        }
+
+        //If the result is not decimal (13.0, 4.0, atc..) remove the zero after the point.
+        String n[] = input.split("\\.");
+        if (n.length > 1) {
+            if (n[1].equals("0")) {
+                input = n[0];
+            }
+        }
+        //If someone doing a mess! (3++3, 4*/+-6, atc..).
+        if(n[0].endsWith("*") || n[0].endsWith("/") || n[0].endsWith("+") || n[0].endsWith("-")){
+            input="ERROR";
+        }
     }
 
 
-
+    //Clear all
     public void OnButtonClearAll(View view){
         display.setText("");
         result.setText("");
@@ -145,12 +165,14 @@ public class MainActivity extends AppCompatActivity {
         answer= "";
     }
 
+    //Clear only one char
     public void OnButtonClearChar(View view) {
         if (!(display.getText().toString().isEmpty())) {
             String str = display.getText().toString().substring(0, display.length() - 1);
             display.setText(str);
-            input = "";
-            answer= "";
+            result.setText("");
+            input = str;
+            Solve();
         }
     }
 }
