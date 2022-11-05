@@ -64,10 +64,12 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:backgroundTint="#29B1A4"
+            android:backgroundTint="#6E6E6E"
             android:fontFamily="casual"
             android:onClick="onButtonClick"
             android:text="("
+            android:textColorHighlight="#686868"
+            android:textColorLink="#6C6B6B"
             android:textSize="34sp"
             app:cornerRadius="36dp" />
 
@@ -77,10 +79,12 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:backgroundTint="#29B1A4"
+            android:backgroundTint="#6E6E6E"
             android:fontFamily="casual"
             android:onClick="onButtonClick"
             android:text=")"
+            android:textColorHighlight="#686868"
+            android:textColorLink="#6C6B6B"
             android:textSize="34sp"
             app:cornerRadius="36dp" />
 

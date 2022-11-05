@@ -43,6 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
             //Call to the function that solves the exercise + chaining the calculation sign
             switch (str) {
+                case ")":
+                    input = "Not clickable!";
+                    display.setText(input);
+                    break;
+
+                case "(":
+                    input = "Not clickable!";
+                    display.setText(input);
+                    break;
 
                 case "x":
                     input += "*";
@@ -83,10 +92,14 @@ public class MainActivity extends AppCompatActivity {
         // Do the math (treated as a decimal number).
         // Input = to the result.
 
-        if (input.split("\\*").length == 2) {
+        if (input.split("\\*").length > 1) {
             String number[] = input.split("\\*");
             try {
-                double mul = Double.parseDouble(number[0]) * Double.parseDouble(number[1]);
+                double mul=0;
+                for(int i=0; i<number.length-1; i++){
+                    mul = Double.parseDouble(number[i]) * Double.parseDouble(number[i+1]);
+                    number[i+1] = mul+"";
+                }
                 input = mul + "";
 
             } catch (Exception e) {
@@ -95,10 +108,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        else if (input.split("/").length == 2) {
+        else if (input.split("/").length > 1) {
             String number[] = input.split("/");
             try {
-                double div = Double.parseDouble(number[0]) / Double.parseDouble(number[1]);
+                double div = 0;
+                for(int i=0; i<number.length-1; i++){
+                    div = Double.parseDouble(number[i]) / Double.parseDouble(number[i+1]);
+                    number[i+1] = div+"";
+                }
                 input = div + "";
             } catch (Exception e) {
                 input = "ERROR";
@@ -106,33 +123,47 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        else if (input.split("\\+").length == 2) {
+        else if (input.split("\\+").length >1) {
             String number[] = input.split("\\+");
             try {
-                double add = Double.parseDouble(number[0]) + Double.parseDouble(number[1]);
+                double add = 0;
+                for(int i=0; i<number.length-1; i++){
+                    add = Double.parseDouble(number[i]) + Double.parseDouble(number[i+1]);
+                    number[i+1] = add+"";
+                }
                 input = add + "";
             } catch (Exception e) {
                 input = "ERROR";
 
             }
         }
-        //Here the length could be bigger than 2 - we may have more than one '-'.
         //For example: (-5-9).
-        //The split will work like this: {"", 5,9}.
+        //The split will work like this: {"", "5","9"} OR {"null", "5", "9"}.
 
         else if (input.split("\\-").length > 1) {
             String number[] = input.split("\\-");
             try {
-                if(number.length == 2){
-                    double sub;
-                    sub = Double.parseDouble(number[0]) - Double.parseDouble(number[1]);
+                //If I substract from negitive number (-5-9).
+                if(number[0].equals("null") || input.startsWith("-")){
+                    double sub =0;
+                    number[0] = 0 + "";
+                    //Special consideration if it is only two numbers (-5-9)
+                    sub = -Double.parseDouble(number[1]) - Double.parseDouble(number[2]);
+                    number[2] = sub+"";
+                    //If more than 2 numbers: for example, -2-9-8
+                    for(int i=2; i<number.length-1; i++){
+                        sub = Double.parseDouble(number[i]) - Double.parseDouble(number[i+1]);
+                        number[i+1] =sub+"";
+                    }
                     input = sub + "";
                 }
-                //If I substract from negitive number (-5-9).
-                else if(number.length == 3){
-                    double sub;
-                    number[0] = 0 + "";
-                    sub = -Double.parseDouble(number[1]) - Double.parseDouble(number[2]);
+                else{
+                    //Subtraction of several numbers where the first one is **not** a negative number
+                    double sub=0;
+                    for(int i=0; i<number.length-1; i++){
+                        sub = Double.parseDouble(number[i]) - Double.parseDouble(number[i+1]);
+                        number[i+1] = sub+"";
+                    }
                     input = sub + "";
                 }
             } catch (Exception e) {
@@ -168,6 +199,11 @@ public class MainActivity extends AppCompatActivity {
         if (!(display.getText().toString().isEmpty()) && (!(display.getText().toString().contains("="))) ) {
             String str = display.getText().toString().substring(0, display.length() - 1);
             display.setText(str);
+            input = str;
+            //Because of the "toString" in line 168, argument like: "6*5" become to "6x5" and we have to chane it in order the "case x" will work
+            if(input.contains("x")){
+                input = input.replace("x","*");
+            }
         }
     }
 }
