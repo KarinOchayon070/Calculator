@@ -121,25 +121,22 @@ public class MainActivity extends AppCompatActivity {
         //The split will work like this: {"", 5,9}.
 
         else if (input.split("\\-").length > 1) {
-            System.out.println(input);
             String number[] = input.split("\\-");
             try {
-                double sub = 0;
                 if(number.length == 2){
+                    double sub;
                     sub = Double.parseDouble(number[0]) - Double.parseDouble(number[1]);
+                    input = sub + "";
                 }
                 //If I substract from negitive number (-5-9).
                 else if(number.length == 3){
+                    double sub;
                     number[0] = 0 + "";
                     sub = -Double.parseDouble(number[1]) - Double.parseDouble(number[2]);
+                    input = sub + "";
                 }
-                else if(number.length > 3){
-                    result.setText("ERROR");
-                }
-                input = sub + "";
             } catch (Exception e) {
                 input = "ERROR";
-
             }
         }
 
@@ -151,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         //If someone doing a mess! (3++3, 4*/+-6, atc..)
-        if(n[0].contains("*") || n[0].contains("/") || n[0].contains("+")){
+        if(n[0].contains("*") || n[0].contains("/") || n[0].contains("+") || n[0].contains("--")){
             input="ERROR";
         }
     }
